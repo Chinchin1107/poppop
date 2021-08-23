@@ -1,0 +1,27 @@
+@font-face {
+    font-family: Fc-Iconic-Regular;
+    src: url('./font/FC\ Iconic\ Regular.ttf');
+}
+
+@font-face {
+    font-family: Fc-Iconic-Bold;
+    src: url('./font/FC\ Iconic\ Bold.ttf');
+}
+
+@font-face {
+    font-family: Fc-Iconic-Italic;
+    src: url('./font/FC\ Iconic\ Italic.ttf.ttf');
+}
+
+@font-face {
+    font-family: Fc-Iconic-Bold-Italic;
+    src: url('./font/FC\ Iconic\ Bold\ Italic.ttf.ttf');
+}
+
+img {
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
