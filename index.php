@@ -11,7 +11,7 @@
 
 <?php if ($_GET['p'] == 'add') : ?>
     <?php
-        if (mysqli_fetch_assoc(mysqli_query($mysql_db, 'SELECT * FROM _' . $_GET['pop'] . ' WHERE user=\'' . $_GET['user'] . '\';')) and $_GET['count'] <= 30) {
+        if (mysqli_fetch_assoc(mysqli_query($mysql_db, 'SELECT * FROM _' . $_GET['pop'] . ' WHERE user=\'' . $_GET['user'] . '\';')) and $_GET['count'] <= 100) {
             mysqli_query($mysql_db, 'UPDATE _' . $_GET['pop'] . ' SET pop=pop + ' . $_GET['count'] . ' WHERE user=\'' . $_GET['user'] . '\';');
         }
     ?>
@@ -218,14 +218,14 @@
     </style>
     <link rel="stylesheet" href="./style/pp.css">
     <script>
-        window.onload = () => { 
+        window.onload = () => {
             var character = document.getElementById('character');
             var cpop = document.getElementById('cpop');
             var count = 0;
             character.src = './pop/<?php echo $id; ?>/-1.png';
 
             setInterval(() => {
-                if (count <= 30 && count > 0) {
+                if (count <= 100   && count > 0) {
                     fetch('http://www.everypop.click/?p=add&pop=<?php echo $id; ?>&user=<?php echo $_COOKIE['user'];?>&count=' + count);
                 }
                 count = 0;
@@ -234,7 +234,9 @@
             const _in = () => {
                 character.src = './pop/<?php echo $id; ?>/1.png';
                 cpop.innerHTML = (parseInt(cpop.innerHTML.split(' ')[0]) + 1).toString() + ' pop';
-                new Audio('./pop/<?php echo $id; ?>/2.mp3').play();
+                if (!mute) {
+                    new Audio('./pop/<?php echo $id; ?>/2.mp3').play();
+                }
                 count++;
             }
 
@@ -253,12 +255,34 @@
             var arrow = document.getElementById('arrow');
         }
 
+        var mute = false;
+        
+        const cmute = () => {
+                if (!mute) {
+                    mute = true;
+                    document.getElementById('imute').src = '../item/mute.png';
+                }else {
+                    mute = false;
+                    document.getElementById('imute').src = '../item/unmute.png';
+                }
+        }
+
         const renderScb = () => {
-            fetch('http://www.everypop.click/?p=q&t=<?php echo $id; ?>').then(res => res.json()).then(data => {
+            fetch('http://www.everypop.click/?p=q&t=<?php echo $id; ?>').then(res => res.json()).then(items => {
                 document.getElementById('poppop-data').innerHTML = '';
                 var count = 0;
+                var sra = new Array();
+                var keyValues = []
+
+                var data = Object.keys(items).map(function(key) {
+                    return [key, items[key]];
+                });
+                data.sort(function(first, second) {
+                return second[1] - first[1];
+                });
+
                 for (var i in data) {
-                    count += parseInt(data[i]);
+                    count += parseInt(data[i][1]);
                 }
                 var nd = document.createElement('div');
                 nd.className = 'poppop-data-item';
@@ -270,16 +294,16 @@
                 nd.appendChild(p2);
                 document.getElementById('poppop-data').appendChild(nd);
                 for (var i in data) {
-                    if (i != 0) {
+                    if (data[i][1] != '0') {
                         var nd = document.createElement('div');
                         nd.className = 'poppop-data-item';
-                        if (i === '<?php echo $_COOKIE['user']; ?>') {
+                        if (data[i][0] === '<?php echo $_COOKIE['user']; ?>') {
                             nd.style = 'background-color: rgba(100, 255, 100, .8);';
                         }
                         let p1 = document.createElement('p');
-                        p1.innerHTML = i;
+                        p1.innerHTML = (parseInt(i) + 1).toString();
                         let p2 = document.createElement('p');
-                        p2.innerHTML = data[i];
+                        p2.innerHTML = data[i][0] + ': ' + data[i][1];
                         nd.appendChild(p1);
                         nd.appendChild(p2);
                         document.getElementById('poppop-data').appendChild(nd);
@@ -313,7 +337,8 @@
     <title> pop<?php echo $name ?> </title>
 </head>
 <body>
-    <div class=box>
+    <img onclick="cmute();" ontouchend="cmute();" id='imute' src="../item/unmute.png" class="mute" />
+    <div class="box">
         <div class="box-popname" id="test"> pop<?php echo $name; ?> </div>
         <div class="box-cpop" id="cpop"><?php echo mysqli_fetch_assoc(mysqli_query($mysql_db, 'SELECT * FROM _' . $id . ' WHERE user=\'' . $_COOKIE['user'] . '\';'))['pop']; ?> pop</div>
         <img class="box-character" id="character" src="./pop/<?php echo $id; ?>/1.png">

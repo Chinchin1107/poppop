@@ -68,7 +68,7 @@ html {
   align-items: center;
   justify-content: space-around;
   box-shadow: 5px 5px 15px rgb(50 50 50 / 70%);
-  cursor: none;
+  cursor: default;
 }
 
 .poppop:hover {
@@ -168,4 +168,12 @@ html {
   margin-left: 5%;
   margin-right: 5%;
   font-size: 5vh;
+}
+
+.mute {
+  height: 5%;
+  position: absolute;
+  z-index: 2;
+  top: 2%;
+  right: 2%;
 }
